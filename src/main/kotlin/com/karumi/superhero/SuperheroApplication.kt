@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class SuperheroApplication
 
 fun main(args: Array<String>) {
-	runApplication<SuperheroApplication>(*args)
+  runApplication<SuperheroApplication>(*args)
 }
