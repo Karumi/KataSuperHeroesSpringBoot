@@ -12,5 +12,4 @@ class SuperheroApplicationTests {
   @Test
   fun contextLoads() {
   }
-
 }
