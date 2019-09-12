@@ -18,7 +18,7 @@ class SuperHeroControllerTest(
   @Autowired val mockMvc: MockMvc
 ) {
 
-  val ANY_SUPERHERO = SuperHero(name = "Wolverine")
+  val ANY_SUPERHERO = SuperHero(id = "1", name = "Wolverine")
 
   @Test
   fun `should return the list of superheroes when contains superheroes`() {
@@ -28,6 +28,16 @@ class SuperHeroControllerTest(
       .andExpect(status().isOk)
       .andExpect(content().json((listOf(ANY_SUPERHERO).toJson()), true))
   }
+
+  @Test
+  fun `should return a superhero if the id exist`() {
+    mockMvc.perform(MockMvcRequestBuilders
+      .get("/superhero/1"))
+
+      .andExpect(status().isOk)
+      .andExpect(content().json(ANY_SUPERHERO.toJson(), true))
+  }
+
 }
 
 private fun <T> T.toJson(): String {
