@@ -12,9 +12,7 @@ class SuperHeroController {
   fun getSuperHeroesEndpoint(): List<SuperHero> =
     listOf(SuperHero(id = "1", name = "Wolverine"))
 
-
   @RequestMapping("/superhero/{id}")
   fun getSuperHeroByIdEndpoint(@PathVariable("id") superHeroId: String): SuperHero =
     SuperHero(id = superHeroId, name = "Wolverine")
-
 }

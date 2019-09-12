@@ -37,7 +37,6 @@ class SuperHeroControllerTest(
       .andExpect(status().isOk)
       .andExpect(content().json(ANY_SUPERHERO.toJson(), true))
   }
-
 }
 
 private fun <T> T.toJson(): String {
