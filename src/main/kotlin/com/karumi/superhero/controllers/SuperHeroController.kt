@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 class SuperHeroController {
 
   @RequestMapping("/superhero")
-  fun getSuperHeroesEndpoint() : List<SuperHero> {
+  fun getSuperHeroesEndpoint(): List<SuperHero> {
     return listOf(SuperHero(name = "Wolverine"))
   }
 }

@@ -21,9 +21,12 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.boot:spring-boot-starter-web")
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
+
+val test: Test by tasks
+test.useJUnitPlatform()
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
