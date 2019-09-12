@@ -30,6 +30,15 @@ class SuperHeroControllerTest(
   }
 
   @Test
+  fun `should return the list of superheroes filters by name`() {
+    mockMvc.perform(MockMvcRequestBuilders
+      .get("/superhero?name=wol"))
+
+      .andExpect(status().isOk)
+      .andExpect(content().json((listOf(ANY_SUPERHERO).toJson()), true))
+  }
+
+  @Test
   fun `should return a superhero if the id exist`() {
     mockMvc.perform(MockMvcRequestBuilders
       .get("/superhero/1"))
