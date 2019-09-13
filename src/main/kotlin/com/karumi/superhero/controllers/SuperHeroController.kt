@@ -1,7 +1,11 @@
 package com.karumi.superhero.controllers
 
 import com.karumi.superhero.domain.model.SuperHero
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -24,4 +28,8 @@ class SuperHeroController {
   @RequestMapping("/superhero/{id}")
   fun getSuperHeroByIdEndpoint(@PathVariable("id") superHeroId: String): SuperHero =
     SuperHero(id = superHeroId, name = "Wolverine")
+
+  @PostMapping("/superhero")
+  fun postSuperHeroEndpoint(@RequestBody newSuperHero: SuperHero) =
+    ResponseEntity(newSuperHero, HttpStatus.CREATED)
 }

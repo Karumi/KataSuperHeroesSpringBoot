@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -19,6 +20,7 @@ class SuperHeroControllerTest(
 ) {
 
   val ANY_SUPERHERO = SuperHero(id = "1", name = "Wolverine")
+  val WRONG_NEW_SUPERHERO = "{}"
 
   @Test
   fun `should return the list of superheroes when contains superheroes`() {
@@ -45,6 +47,27 @@ class SuperHeroControllerTest(
 
       .andExpect(status().isOk)
       .andExpect(content().json(ANY_SUPERHERO.toJson(), true))
+  }
+
+  @Test
+  fun `should return the superhero created if the values are correct`() {
+    mockMvc.perform(MockMvcRequestBuilders
+      .post("/superhero")
+      .contentType(MediaType.APPLICATION_JSON_UTF8)
+      .content(ANY_SUPERHERO.toJson()))
+
+      .andExpect(status().isCreated)
+      .andExpect(content().json(ANY_SUPERHERO.toJson(), true))
+  }
+
+  @Test
+  fun `should return an error if the new superhero is invalid`() {
+    mockMvc.perform(MockMvcRequestBuilders
+      .post("/superhero")
+      .contentType(MediaType.APPLICATION_JSON_UTF8)
+      .content(WRONG_NEW_SUPERHERO))
+
+      .andExpect(status().isUnprocessableEntity)
   }
 }
 
