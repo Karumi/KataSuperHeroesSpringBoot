@@ -1,5 +1,7 @@
 package com.karumi.superhero.controllers
 
+import com.karumi.superhero.controllers.exceptions.NotFound
+import com.karumi.superhero.data.SuperHeroStorage
 import com.karumi.superhero.domain.model.SuperHero
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,13 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class SuperHeroController {
+class SuperHeroController(
+  val superHeroStorage: SuperHeroStorage
+) {
 
   @RequestMapping("/superhero")
   fun getSuperHeroesEndpoint(
     @RequestParam(name = "name", required = false) name: String?
   ): List<SuperHero> {
-    val superheroes = listOf(SuperHero(id = "1", name = "Wolverine"))
+    val superheroes = superHeroStorage.getAll()
     return if (name != null) {
       superheroes.filter { it.name.contains(name, ignoreCase = true) }
     } else {
@@ -27,9 +31,9 @@ class SuperHeroController {
 
   @RequestMapping("/superhero/{id}")
   fun getSuperHeroByIdEndpoint(@PathVariable("id") superHeroId: String): SuperHero =
-    SuperHero(id = superHeroId, name = "Wolverine")
+    superHeroStorage.getSuperHero(superHeroId) ?: throw NotFound
 
   @PostMapping("/superhero")
   fun postSuperHeroEndpoint(@RequestBody newSuperHero: SuperHero) =
-    ResponseEntity(newSuperHero, HttpStatus.CREATED)
+    ResponseEntity(superHeroStorage.addSuperHero(newSuperHero), HttpStatus.CREATED)
 }

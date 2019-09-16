@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
+
   @ExceptionHandler(InvalidDefinitionException::class)
   fun handleConflict(
     ex: InvalidDefinitionException,
