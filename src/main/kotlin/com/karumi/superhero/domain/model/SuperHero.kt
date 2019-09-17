@@ -5,3 +5,8 @@ data class SuperHero(
   val name: String,
   val photo: String? = null
 )
+
+data class NewSuperHero(
+  val name: String,
+  val photo: String? = null
+)
