@@ -2,12 +2,10 @@ package com.karumi.superhero.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.karumi.superhero.data.SuperHeroRepository
-import com.karumi.superhero.data.model.mapToSuperHero
 import com.karumi.superhero.domain.model.NewSuperHero
 import com.karumi.superhero.domain.model.SuperHero
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -25,16 +23,11 @@ class SuperHeroControllerTest(
 ) {
 
   val ANY_SUPERHERO = SuperHero(id = "1", name = "Wolverine")
-  val ANY_NEW_SUPERHERO = NewSuperHero(name = "IronMan")
+  val ANY_NEW_SUPERHERO = NewSuperHero(name = "Wolverine")
   val WRONG_NEW_SUPERHERO = "{}"
 
   @MockkBean
   lateinit var superHeroRepository: SuperHeroRepository
-
-  @Before
-  fun setup() {
-    superHeroRepository.resetToDefault()
-  }
 
   @Test
   fun `should return the list of superheroes when contains superheroes`() {
@@ -71,8 +64,7 @@ class SuperHeroControllerTest(
 
   @Test
   fun `should return the superhero created if the values are correct`() {
-    val superheroCreated = ANY_NEW_SUPERHERO.mapToSuperHero("2")
-    every { superHeroRepository.addSuperHero(any()) } returns superheroCreated
+    every { superHeroRepository.addSuperHero(any()) } returns ANY_SUPERHERO
 
     mockMvc.perform(MockMvcRequestBuilders
       .post("/superhero")
@@ -81,7 +73,7 @@ class SuperHeroControllerTest(
 
       .andExpect(status().isCreated)
       .andExpect(content()
-        .json(superheroCreated.toJson(), true))
+        .json(ANY_SUPERHERO.toJson(), true))
   }
 
   @Test
