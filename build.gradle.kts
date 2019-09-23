@@ -12,9 +12,11 @@ plugins {
 group = "com.karumi"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
+val arrowVersion = "0.10.0"
 
 repositories {
   mavenCentral()
+  maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
 }
 
 
@@ -24,6 +26,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("io.arrow-kt:arrow-core:$arrowVersion")
+  implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
   runtimeOnly("com.h2database:h2")
 
   testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")

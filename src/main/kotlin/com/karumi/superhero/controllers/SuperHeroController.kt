@@ -31,13 +31,22 @@ class SuperHeroController(
       getAllSuperHeroes()
     } else {
       searchSuperHeroes(name)
-    }
+    }.fold(
+      ifRight = { it },
+      ifLeft = { throw it }
+    )
 
   @RequestMapping("/superhero/{id}")
   fun getSuperHeroByIdEndpoint(@PathVariable("id") superHeroId: String): SuperHero =
-    getSuperHeroById(superHeroId)
+    getSuperHeroById(superHeroId).fold(
+      ifRight = { it },
+      ifLeft = { throw it }
+    )
 
   @PostMapping("/superhero")
   fun postSuperHeroEndpoint(@RequestBody newSuperHero: NewSuperHero) =
-    ResponseEntity(addSuperHero(newSuperHero), HttpStatus.CREATED)
+    addSuperHero(newSuperHero).fold(
+      ifRight = { ResponseEntity(it, HttpStatus.CREATED) },
+      ifLeft = { throw it }
+    )
 }

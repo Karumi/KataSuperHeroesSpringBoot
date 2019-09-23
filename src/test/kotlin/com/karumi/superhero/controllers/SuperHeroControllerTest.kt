@@ -1,5 +1,8 @@
 package com.karumi.superhero.controllers
 
+import arrow.core.None
+import arrow.core.right
+import arrow.core.some
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.karumi.superhero.data.SuperHeroRepository
 import com.karumi.superhero.domain.model.NewSuperHero
@@ -31,7 +34,7 @@ class SuperHeroControllerTest(
 
   @Test
   fun `should return the list of superheroes when contains superheroes`() {
-    every { superHeroRepository.getAll() } returns listOf(ANY_SUPERHERO)
+    every { superHeroRepository.getAll() } returns listOf(ANY_SUPERHERO).right()
 
     mockMvc.perform(MockMvcRequestBuilders
       .get("/superhero"))
@@ -42,7 +45,7 @@ class SuperHeroControllerTest(
 
   @Test
   fun `should return the list of superheroes filters by name`() {
-    every { superHeroRepository.searchBy(eq("wol")) } returns listOf(ANY_SUPERHERO)
+    every { superHeroRepository.searchBy(eq("wol")) } returns listOf(ANY_SUPERHERO).right()
 
     mockMvc.perform(MockMvcRequestBuilders
       .get("/superhero?name=wol"))
@@ -53,7 +56,7 @@ class SuperHeroControllerTest(
 
   @Test
   fun `should return a superhero if the id exist`() {
-    every { superHeroRepository[any()] } returns ANY_SUPERHERO
+    every { superHeroRepository[any()] } returns ANY_SUPERHERO.some().right()
 
     mockMvc.perform(MockMvcRequestBuilders
       .get("/superhero/1"))
@@ -63,8 +66,18 @@ class SuperHeroControllerTest(
   }
 
   @Test
+  fun `should return a 404 if the id not exist`() {
+    every { superHeroRepository[any()] } returns None.right()
+
+    mockMvc.perform(MockMvcRequestBuilders
+      .get("/superhero/1"))
+
+      .andExpect(status().isNotFound)
+  }
+
+  @Test
   fun `should return the superhero created if the values are correct`() {
-    every { superHeroRepository.addSuperHero(any()) } returns ANY_SUPERHERO
+    every { superHeroRepository.addSuperHero(any()) } returns ANY_SUPERHERO.right()
 
     mockMvc.perform(MockMvcRequestBuilders
       .post("/superhero")
