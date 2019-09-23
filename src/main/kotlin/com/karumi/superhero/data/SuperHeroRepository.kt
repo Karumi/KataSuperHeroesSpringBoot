@@ -23,4 +23,7 @@ class SuperHeroRepository(
   }
 
   fun getAll(): List<SuperHero> = superHeroStorage.findAll().map { it.mapToDomain() }
+
+  fun searchBy(name: String): List<SuperHero> =
+    superHeroStorage.findByNameContainingIgnoreCase(name).map { it.mapToDomain() }
 }

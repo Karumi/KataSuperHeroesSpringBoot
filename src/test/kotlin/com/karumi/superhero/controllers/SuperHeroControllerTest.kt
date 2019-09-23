@@ -42,7 +42,7 @@ class SuperHeroControllerTest(
 
   @Test
   fun `should return the list of superheroes filters by name`() {
-    every { superHeroRepository.getAll() } returns listOf(ANY_SUPERHERO)
+    every { superHeroRepository.searchBy(eq("wol")) } returns listOf(ANY_SUPERHERO)
 
     mockMvc.perform(MockMvcRequestBuilders
       .get("/superhero?name=wol"))
