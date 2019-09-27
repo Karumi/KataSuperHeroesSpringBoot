@@ -42,4 +42,10 @@ class SuperHeroRepository(
   }.toEither {
     DbStorageError
   }
+
+  fun delete(id: String): Either<Exception, String> = TryLogger {
+    superHeroStorage.deleteById(id.toLong()).let { id }
+  }.toEither {
+    DbStorageError
+  }
 }

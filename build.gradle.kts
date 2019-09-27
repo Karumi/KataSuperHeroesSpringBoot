@@ -22,10 +22,11 @@ repositories {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter")
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("io.arrow-kt:arrow-core:$arrowVersion")
   implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
   runtimeOnly("com.h2database:h2")
@@ -34,6 +35,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(module = "mockito-core")
   }
+  testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.ninja-squad:springmockk:1.1.2")
 
 }
