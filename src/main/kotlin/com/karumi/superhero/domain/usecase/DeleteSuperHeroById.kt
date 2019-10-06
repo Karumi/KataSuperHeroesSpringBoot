@@ -1,13 +1,13 @@
 package com.karumi.superhero.domain.usecase
 
-import arrow.core.Either
 import com.karumi.superhero.data.SuperHeroRepository
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 
 @Service
 class DeleteSuperHeroById(
   val superHeroesRepository: SuperHeroRepository
 ) {
-  operator fun invoke(id: String): Either<Exception, String> =
+  operator fun invoke(id: String): Mono<Unit> =
     superHeroesRepository.delete(id)
 }

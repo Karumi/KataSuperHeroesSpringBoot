@@ -1,29 +1,32 @@
 package com.karumi.superhero.controllers
 
-import arrow.core.None
-import arrow.core.right
-import arrow.core.some
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.karumi.superhero.data.SuperHeroRepository
+import com.karumi.superhero.domain.exceptions.NotFound
 import com.karumi.superhero.domain.model.NewSuperHero
 import com.karumi.superhero.domain.model.SuperHero
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.web.reactive.function.BodyInserters
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(SpringExtension::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SuperHeroControllerTest(
-  @Autowired val mockMvc: MockMvc
+  @Autowired val mockMvc: WebTestClient
 ) {
 
   val ANY_SUPERHERO = SuperHero(id = "1", name = "Wolverine")
@@ -34,100 +37,130 @@ class SuperHeroControllerTest(
   lateinit var superHeroRepository: SuperHeroRepository
 
   @Test
-  @WithMockUser("USER")
   fun `should return the list of superheroes when contains superheroes`() {
-    every { superHeroRepository.getAll() } returns listOf(ANY_SUPERHERO).right()
+    every { superHeroRepository.getAll() } returns Flux.fromIterable(listOf(ANY_SUPERHERO))
 
-    mockMvc.perform(MockMvcRequestBuilders
-      .get("/superhero"))
+    mockMvc
+      .get()
+      .uri("/superhero")
+      .headers(::withAnyUser)
+      .exchange()
 
-      .andExpect(status().isOk)
-      .andExpect(content().json((listOf(ANY_SUPERHERO).toJson()), true))
+      .expectStatus().isOk
+      .expectBodyList(SuperHero::class.java)
+      .contains(ANY_SUPERHERO)
   }
 
   @Test
-  @WithMockUser("USER")
   fun `should return the list of superheroes filters by name`() {
-    every { superHeroRepository.searchBy(eq("wol")) } returns listOf(ANY_SUPERHERO).right()
+    every {
+      superHeroRepository.searchBy(eq("wol"))
+    } returns Flux.fromIterable(listOf(ANY_SUPERHERO))
 
-    mockMvc.perform(MockMvcRequestBuilders
-      .get("/superhero?name=wol"))
+    mockMvc
+      .get()
+      .uri("/superhero?name=wol")
+      .headers(::withAnyUser)
+      .exchange()
 
-      .andExpect(status().isOk)
-      .andExpect(content().json((listOf(ANY_SUPERHERO).toJson()), true))
+      .expectStatus().isOk
+      .expectBodyList(SuperHero::class.java)
+      .contains(ANY_SUPERHERO)
   }
 
   @Test
-  @WithMockUser("USER")
   fun `should return a superhero if the id exist`() {
-    every { superHeroRepository[any()] } returns ANY_SUPERHERO.some().right()
+    every { superHeroRepository[any()] } returns Mono.just(ANY_SUPERHERO)
 
-    mockMvc.perform(MockMvcRequestBuilders
-      .get("/superhero/1"))
+    mockMvc
+      .get()
+      .uri("/superhero/1")
+      .headers(::withAnyUser)
+      .exchange()
 
-      .andExpect(status().isOk)
-      .andExpect(content().json(ANY_SUPERHERO.toJson(), true))
+      .expectStatus().isOk
+      .expectBody<SuperHero>()
+      .isEqualTo(ANY_SUPERHERO)
   }
 
   @Test
-  @WithMockUser("USER")
   fun `should return a 404 if the id not exist`() {
-    every { superHeroRepository[any()] } returns None.right()
+    every { superHeroRepository[any()] } returns Mono.error(NotFound)
 
-    mockMvc.perform(MockMvcRequestBuilders
-      .get("/superhero/1"))
+    mockMvc
+      .get()
+      .uri("/superhero/1")
+      .headers(::withAnyUser)
+      .exchange()
 
-      .andExpect(status().isNotFound)
+      .expectStatus()
+      .isNotFound
   }
 
   @Test
-  @WithMockUser(roles = ["ADMIN"])
   fun `should return the superhero created if the values are correct`() {
-    every { superHeroRepository.addSuperHero(any()) } returns ANY_SUPERHERO.right()
+    every { superHeroRepository.addSuperHero(any()) } returns Mono.just(ANY_SUPERHERO)
 
-    mockMvc.perform(MockMvcRequestBuilders
-      .post("/superhero")
+    mockMvc
+      .post()
+      .uri("/superhero")
+      .headers(::withAdminUser)
       .contentType(MediaType.APPLICATION_JSON_UTF8)
-      .content(ANY_NEW_SUPERHERO.toJson()))
+      .body(Mono.just(ANY_NEW_SUPERHERO), NewSuperHero::class.java)
+      .exchange()
 
-      .andExpect(status().isCreated)
-      .andExpect(content()
-        .json(ANY_SUPERHERO.toJson(), true))
+      .expectStatus().isCreated
+      .expectBody<SuperHero>()
+      .isEqualTo(ANY_SUPERHERO)
   }
 
   @Test
-  @WithMockUser(roles = ["USER"])
   fun `should return the unauthorized if the user is not admin`() {
-    every { superHeroRepository.addSuperHero(any()) } returns ANY_SUPERHERO.right()
+    every { superHeroRepository.addSuperHero(any()) } returns Mono.just(ANY_SUPERHERO)
 
-    mockMvc.perform(MockMvcRequestBuilders
-      .post("/superhero")
+    mockMvc
+      .post()
+      .uri("/superhero")
+      .headers(::withAnyUser)
       .contentType(MediaType.APPLICATION_JSON_UTF8)
-      .content(ANY_NEW_SUPERHERO.toJson()))
+      .body(Mono.just(ANY_NEW_SUPERHERO), NewSuperHero::class.java)
+      .exchange()
 
-      .andExpect(status().isForbidden)
+      .expectStatus().isForbidden
   }
 
   @Test
-  @WithMockUser(roles = ["ADMIN"])
   fun `should return an error if the new superhero is invalid`() {
-    mockMvc.perform(MockMvcRequestBuilders
-      .post("/superhero")
+    mockMvc
+      .post()
+      .uri("/superhero")
+      .headers(::withAdminUser)
       .contentType(MediaType.APPLICATION_JSON_UTF8)
-      .content(WRONG_NEW_SUPERHERO))
+      .body(BodyInserters.fromObject(WRONG_NEW_SUPERHERO))
+      .exchange()
 
-      .andExpect(status().isUnprocessableEntity)
+      .expectStatus().isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY)
   }
 
-  @WithMockUser(roles = ["ADMIN"])
+  @Test
   fun `should return sucess if the new superhero is deleted`() {
-    every { superHeroRepository.delete(any()) } returns ANY_SUPERHERO.id.right()
-    mockMvc.perform(
-      MockMvcRequestBuilders.delete("/superhero/1"))
+    every { superHeroRepository.delete(any()) } returns Mono.empty()
 
-      .andExpect(status().isNoContent)
+    mockMvc
+      .delete()
+      .uri("/superhero/1")
+      .headers(::withAdminUser)
+      .exchange()
+
+      .expectStatus().isNoContent
   }
 }
+
+private fun withAnyUser(headers: HttpHeaders) =
+  headers.setBasicAuth("user", "userPass")
+
+private fun withAdminUser(headers: HttpHeaders) =
+  headers.setBasicAuth("admin", "adminPass")
 
 private fun <T> T.toJson(): String {
   val objectMapper = ObjectMapper()

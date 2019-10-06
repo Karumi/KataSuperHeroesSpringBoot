@@ -17,12 +17,14 @@ val arrowVersion = "0.10.0"
 repositories {
   mavenCentral()
   maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
+  maven(url = "https://repo.spring.io/milestone")
 }
 
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter")
   implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -35,6 +37,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(module = "mockito-core")
   }
+  testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.ninja-squad:springmockk:1.1.2")
 
