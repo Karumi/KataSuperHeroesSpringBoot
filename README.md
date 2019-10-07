@@ -20,11 +20,11 @@ Our recommendation for this exercise is:
   1. Checkout `2-dependency-injection` branch.
 
 ### Exercise
-    1. Improve postSuperHeroEndpoint by receiving a model that contains only the information needed. The id will be generated instead of passed in parameter.
-    2. Specialize your storage to a repository using the corresponding annotation.
-    3. Extract your business logic in use cases and reference them as service.
-    4. Use your use cases/services instead of storage from your controllers.
-    5. Use springmockk to setup your repository in your tests.
+  1. Improve postSuperHeroEndpoint by receiving a model that contains only the information needed. The id will be generated instead of passed in parameter.
+  2. Specialize your storage to a repository using the corresponding annotation.
+  3. Extract your business logic in use cases and reference them as service.
+  4. Use your use cases/services instead of storage from your controllers.
+  5. Use springmockk to setup your repository in your tests.
 
 - To verify the correct behavior of your code you can execute:
 
