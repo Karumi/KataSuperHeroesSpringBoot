@@ -17,7 +17,7 @@ Your task as Spring Boot Developer is to **create a rest application*. You will 
 Our recommendation for this exercise is:
 
 ### Before starting
-  1. Checkout `7-Webflux` branch.
+  1. Checkout `6-authorization` branch.
 
 ### Exercise
   1. Wrap your repository methods with reactive publishers.
