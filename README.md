@@ -17,14 +17,12 @@ Your task as Spring Boot Developer is to **create a rest application*. You will 
 Our recommendation for this exercise is:
 
 ### Before starting
-  1. Checkout `2-dependency-injection` branch.
+  1. Checkout `4-data-providers` branch.
 
 ### Exercise
-    1. Configure JPA and H2 as database.
-    2. Create entity class that represent the SuperHero in the database.
-    3. Create a DataSource that implements Crud operations through interface.
-    4. Use datasource in the repository.
-    5. Add Query Method to Datasource to find by name ignoring case.
+  1. Add Reference to Arrow https://arrow-kt.io/docs/.
+  2. Make your repository return explicit functional errors types.
+  3. Handle it at controller level.
 
 - To verify the correct behavior of your code you can execute:
 
