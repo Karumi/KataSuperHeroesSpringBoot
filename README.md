@@ -17,7 +17,7 @@ Your task as Spring Boot Developer is to **create a rest application*. You will 
 Our recommendation for this exercise is:
 
 ### Before starting
-  1. Checkout `2-dependency-injection` branch.
+  1. Checkout `3-DDD` branch.
 
 ### Exercise
     1. Configure JPA and H2 as database.
