@@ -20,10 +20,10 @@ Our recommendation for this exercise is:
   1. Checkout `1-Rest` branch.
 
 ### Exercise
-    1. Extract the storage logic to a separate class. 
-    2. Add it as a dependency to your controller.
-    3. Configure your storage class as a dependency.
-    4. Update your test configuration.
+  1. Extract the storage logic to a separate class. 
+  2. Add it as a dependency to your controller.
+  3. Configure your storage class as a dependency.
+  4. Update your test configuration.
 
 - To verify the correct behavior of your code you can execute:
 
