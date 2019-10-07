@@ -20,11 +20,11 @@ Our recommendation for this exercise is:
   1. Checkout `3-DDD` branch.
 
 ### Exercise
-    1. Configure JPA and H2 as database.
-    2. Create entity class that represent the SuperHero in the database.
-    3. Create a DataSource that implements Crud operations through interface.
-    4. Use datasource in the repository.
-    5. Add Query Method to Datasource to find by name ignoring case.
+  1. Configure JPA and H2 as database.
+  2. Create entity class that represent the SuperHero in the database.
+  3. Create a DataSource that implements Crud operations through interface.
+  4. Use datasource in the repository.
+  5. Add Query Method to Datasource to find by name ignoring case.
 
 - To verify the correct behavior of your code you can execute:
 
