@@ -139,7 +139,7 @@ class SuperHeroControllerTest(
       .body(BodyInserters.fromObject(WRONG_NEW_SUPERHERO))
       .exchange()
 
-      .expectStatus().isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
   }
 
   @Test

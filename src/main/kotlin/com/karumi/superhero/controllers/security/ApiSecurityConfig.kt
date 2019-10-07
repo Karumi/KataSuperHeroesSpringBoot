@@ -4,17 +4,21 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.server.SecurityWebFilterChain
 
 @Configuration
 @EnableWebSecurity
-class ApiSecurityConfig : WebSecurityConfigurerAdapter() {
+@EnableWebFluxSecurity
+class ApiSecurityConfig {
 
-  override fun configure(auth: AuthenticationManagerBuilder) {
+  fun configure(auth: AuthenticationManagerBuilder) {
     auth.inMemoryAuthentication()
       .withUser("user")
       .password("password")
@@ -27,16 +31,35 @@ class ApiSecurityConfig : WebSecurityConfigurerAdapter() {
       .roles("USER", "ADMIN")
   }
 
-  override fun configure(http: HttpSecurity) {
-    http
-      .httpBasic()
-      .and()
-      .authorizeRequests()
-      .antMatchers(HttpMethod.POST, "/superhero").hasRole("ADMIN")
-      .anyRequest().authenticated()
-      .and()
+  /**
+   * Sample in-memory user details service.
+   */
+  // Removes warning from "withDefaultPasswordEncoder()"
+  @Bean
+  fun userDetailsService(): MapReactiveUserDetailsService {
+    return MapReactiveUserDetailsService(
+      User
+        .withUsername("user")
+        .password(encoder().encode("userPass"))
+        .roles("USER")
+        .build(),
+      User
+        .withUsername("admin")
+        .password(encoder().encode("adminPass"))
+        .roles("USER", "ADMIN")
+        .build())
+  }
+
+  @Bean
+  fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+    return http
       .csrf().disable()
-      .formLogin().disable()
+      .httpBasic().and()
+      .authorizeExchange()
+      .pathMatchers(HttpMethod.POST, "/superhero").hasRole("ADMIN")
+      .anyExchange().authenticated()
+      .and()
+      .build()
   }
 
   @Bean
